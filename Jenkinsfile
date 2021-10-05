@@ -62,7 +62,7 @@ podTemplate(label: 'bc16', containers: [
 	    }
              stage ('Invoking helm build') {
         	
-		    build job: 'helm-bc16', parameters: [string(name: 'master', value: env.BRANCH_NAME)]
+		    build job: 'bc16-r', parameters: [string(name: 'master', value: env.BRANCH_NAME)]
 	    }  
                     
 				
