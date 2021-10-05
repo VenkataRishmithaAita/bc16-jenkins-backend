@@ -18,7 +18,7 @@ podTemplate(label: 'bc16', containers: [
 
 
 //     ])
-			{
+// 			{
 
 	    stage('Checkout Source') {
       
@@ -66,5 +66,5 @@ podTemplate(label: 'bc16', containers: [
 	    }  
                     
 				
-	}    
+// 	}    
     }}
