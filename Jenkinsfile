@@ -20,7 +20,11 @@ podTemplate(label: 'bc16-be', containers: [
 //         git 'https://github.com/PDhanrajnath/fe.git'
 //       }
 //     }
-	  
+	   stage('Checkout Source') {
+      
+        git 'https://github.com/VenkataRishmithaAita/bc16-jenkins-backend.git'
+      
+    }
 	  stage('Build Jar'){
 	           container('bc16-java'){
 			   
