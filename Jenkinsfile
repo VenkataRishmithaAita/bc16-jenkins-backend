@@ -1,0 +1,69 @@
+import groovy.transform.Field
+
+podTemplate(label: 'bc16', containers: [
+	containerTemplate(name: 'docker', image: 'docker:19.03', command: 'cat', ttyEnabled: true),
+	containerTemplate(name: 'java', image: 'adoptopenjdk/openjdk11', command: 'cat', ttyEnabled: true) ],
+	volumes: [hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')]
+)
+	{
+		node('bc16'){
+    environment {
+        docker_image=""
+        DOCKERHUB_CREDENTIALS= credentials('rishmitha-dockerhub')
+        MY_KUBECONFIG = credentials('my-config')
+    }
+
+     withEnv([
+        "VERSION=${env.BUILD_NUMBER}",
+
+
+    ]){
+
+	    stage('Checkout Source') {
+      
+        git 'https://github.com/VenkataRishmithaAita/bc16-jenkins-backend.git'
+      
+    }
+	    stage('Build Jar'){
+	     
+	        
+	           container('java'){
+   
+	            sh 'organizationService/gradlew build'
+
+	            sh 'jobsService/gradlew build'
+	           }
+	            
+	    }
+	    stage('Build Docker'){
+            
+            container('docker'){
+
+            sh 'docker build -t rishmitha/org_jenkins:${VERSION} organizationService/'
+            sh 'docker build -t rishmitha/job_jenkins:${VERSION} jobsService/'
+            sh 'docker images'
+            
+        }
+	    }
+	    
+	   stage('Push Docker'){
+	        
+	            container('docker'){
+                withCredentials([usernamePassword(credentialsId: 'rishmitha-dockerhub', usernameVariable: 'username', passwordVariable: 'password')]) {
+
+	          sh 'docker login -u $username -p $password'
+	            //sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+	            sh 'docker push rishmitha/org_jenkins:${VERSION}'
+	            sh 'docker push rishmitha/job_jenkins:${VERSION}'
+	           
+	        }
+              }
+	    }
+             stage ('Invoking helm build') {
+        	
+		    build job: 'helm-bc16'
+	    }  
+                    
+				
+	}    
+    }}
