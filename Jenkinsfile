@@ -47,7 +47,8 @@ podTemplate(label: 'bc16-be', containers: [
 					//sh 'docker images'
 					sh 'docker build -t rishmitha/org_jenkins:latest organizationService/'
             				sh 'docker build -t rishmitha/job_jenkins:latest jobsService/'
-					sh "docker tag dhanrajnath/be_jenkins:latest dhanrajnath/be_jenkins:${BUILD_NUMBER}"
+					sh "docker tag rishmitha/org_jenkins:latest rishmitha/org_jenkins:${BUILD_NUMBER}"
+					sh "docker tag rishmitha/job_jenkins:latest rishmitha/job_jenkins:${BUILD_NUMBER}"
             				sh 'docker images'
 				}
 			
