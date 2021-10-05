@@ -45,8 +45,9 @@ podTemplate(label: 'bc16-be', containers: [
                 
 					//sh 'docker build -t dhanrajnath/be_jenkins .'
 					//sh 'docker images'
-					sh 'docker build -t rishmitha/org_jenkins organizationService/'
-            				sh 'docker build -t rishmitha/job_jenkins jobsService/'
+					sh 'docker build -t rishmitha/org_jenkins:latest organizationService/'
+            				sh 'docker build -t rishmitha/job_jenkins:latest jobsService/'
+					sh "docker tag dhanrajnath/be_jenkins:latest dhanrajnath/be_jenkins:${BUILD_NUMBER}"
             				sh 'docker images'
 				}
 			
@@ -62,8 +63,10 @@ podTemplate(label: 'bc16-be', containers: [
 						echo USERNAME
 						echo "username is $USERNAME"
 						//sh 'docker push dhanrajnath/be_jenkins'
-						sh 'docker push rishmitha/org_jenkins'
-	            				sh 'docker push rishmitha/job_jenkins'
+						sh 'docker push rishmitha/org_jenkins:latest'
+	            				sh 'docker push rishmitha/job_jenkins:latest'
+	    					sh "docker push rishmitha/org_jenkins:${BUILD_NUMBER}"
+	    					sh "docker push rishmitha/job_jenkins:${BUILD_NUMBER}"
                
 				}
 			}
@@ -71,7 +74,9 @@ podTemplate(label: 'bc16-be', containers: [
 
 		   stage ('BC16-GC') {
         	
-		    build job: 'bc16-r', parameters: [string(name: 'master', value: env.BRANCH_NAME)]
+// 		    build job: 'bc16-r', parameters: [string(name: 'master', value: env.BRANCH_NAME)]
+	            build job: 'bc16-r', parameters: [string(name: 'master', value: BUILD_NUMBER)]
+	
 	
         }
     
