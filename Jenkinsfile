@@ -13,11 +13,12 @@ podTemplate(label: 'bc16', containers: [
         MY_KUBECONFIG = credentials('master2-rishmita')
     }
 
-     withEnv([
-        "VERSION=${env.BUILD_NUMBER}",
+//      withEnv([
+//         "VERSION=${env.BUILD_NUMBER}",
 
 
-    ]){
+//     ])
+			{
 
 	    stage('Checkout Source') {
       
@@ -39,8 +40,8 @@ podTemplate(label: 'bc16', containers: [
             
             container('docker'){
 
-            sh 'docker build -t rishmitha/org_jenkins:${VERSION} organizationService/'
-            sh 'docker build -t rishmitha/job_jenkins:${VERSION} jobsService/'
+            sh 'docker build -t rishmitha/org_jenkins organizationService/'
+            sh 'docker build -t rishmitha/job_jenkins jobsService/'
             sh 'docker images'
             
         }
@@ -53,15 +54,15 @@ podTemplate(label: 'bc16', containers: [
 
 	          sh 'docker login -u $username -p $password'
 	            //sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-	            sh 'docker push rishmitha/org_jenkins:${VERSION}'
-	            sh 'docker push rishmitha/job_jenkins:${VERSION}'
+	            sh 'docker push rishmitha/org_jenkins'
+	            sh 'docker push rishmitha/job_jenkins'
 	           
 	        }
               }
 	    }
              stage ('Invoking helm build') {
         	
-		    build job: 'helm-bc16'
+		    build job: 'helm-bc16', parameters: [string(name: 'master', value: env.BRANCH_NAME)]
 	    }  
                     
 				
