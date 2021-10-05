@@ -10,7 +10,7 @@ podTemplate(label: 'bc16', containers: [
     environment {
         docker_image=""
         DOCKERHUB_CREDENTIALS= credentials('rishmitha-dockerhub')
-        MY_KUBECONFIG = credentials('my-config')
+        MY_KUBECONFIG = credentials('master2-rishmita')
     }
 
      withEnv([
